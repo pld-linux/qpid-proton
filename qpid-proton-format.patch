@@ -1,0 +1,11 @@
+--- qpid-proton-0.31.0/CMakeLists.txt.orig	2020-05-07 16:57:23.000000000 +0200
++++ qpid-proton-0.31.0/CMakeLists.txt	2020-05-26 22:29:21.525675340 +0200
+@@ -140,7 +140,7 @@
+   endif (ENABLE_WARNING_ERROR)
+   set (COMPILE_WARNING_FLAGS "${WERROR} -Wall -pedantic-errors")
+   # C++ allow "%z" format specifier and variadic macros
+-  set (CXX_WARNING_FLAGS "${COMPILE_WARNING_FLAGS} -Wno-format -Wno-variadic-macros")
++  set (CXX_WARNING_FLAGS "${COMPILE_WARNING_FLAGS} -Wno-variadic-macros")
+   if (NOT BUILD_WITH_CXX)
+     set (COMPILE_WARNING_FLAGS "${COMPILE_WARNING_FLAGS} -Wstrict-prototypes -Wc++-compat -Wvla -Wsign-compare -Wwrite-strings")
+     set (COMPILE_LANGUAGE_FLAGS "-std=c99")

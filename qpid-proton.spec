@@ -248,7 +248,6 @@ rm -rf $RPM_BUILD_ROOT
 %{_pkgconfigdir}/libqpid-proton-core.pc
 %{_pkgconfigdir}/libqpid-proton-proactor.pc
 %{_libdir}/cmake/Proton
-%{_datadir}/proton/examples
 
 %files c-apidocs
 %defattr(644,root,root,755)

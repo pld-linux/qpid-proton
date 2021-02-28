@@ -76,9 +76,7 @@ Summary:	Documentation for Qpid Proton C API
 Summary(pl.UTF-8):	Dokumentacja API bibliotek C Qpid Proton
 Group:		Documentation
 Obsoletes:	qpid-proton-c-devel-doc < 0.31.0
-%if "%{_rpmversion}" >= "4.6"
 BuildArch:	noarch
-%endif
 
 %description c-apidocs
 Documentation for Qpid Proton C API.
@@ -118,9 +116,7 @@ biblioteki C++ Qpid Proton.
 Summary:	Documentation for Qpid Proton C++ API
 Summary(pl.UTF-8):	Dokumentacja API biblioteki C++ Qpid Proton
 Group:		Documentation
-%if "%{_rpmversion}" >= "4.6"
 BuildArch:	noarch
-%endif
 
 %description cpp-apidocs
 Documentation for Qpid Proton C++ API.
@@ -146,9 +142,7 @@ Summary:	Documentation for the Python language bindings for Qpid Proton
 Summary(pl.UTF-8):	Dokumentacja wiązań Pythona do biblioteki Qpid Proton
 Group:		Documentation
 Obsoletes:	python-qpid-proton-doc < 0.31.0
-%if "%{_rpmversion}" >= "4.6"
 BuildArch:	noarch
-%endif
 
 %description -n python-%{name}-apidocs
 Documentation for the Python language bindings for Qpid Proton.

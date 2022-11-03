@@ -10,7 +10,7 @@ Summary:	Qpid Proton - AMQP messaging toolkit
 Summary(pl.UTF-8):	Qpid Proton - narzędzia do komunikacji AMQP
 Name:		qpid-proton
 Version:	0.35.0
-Release:	3
+Release:	4
 License:	Apache v2.0
 Group:		Libraries
 Source0:	https://downloads.apache.org/qpid/proton/%{version}/%{name}-%{version}.tar.gz

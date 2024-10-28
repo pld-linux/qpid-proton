@@ -1,9 +1,10 @@
---- qpid-proton-0.35.0/CMakeLists.txt~	2021-06-25 15:42:55.000000000 +0200
-+++ qpid-proton-0.35.0/CMakeLists.txt	2021-10-13 21:57:43.540058477 +0200
-@@ -176,10 +176,6 @@
- set (LINK_LTO_Clang "-flto=thin")
- set (LINK_LTO_MSVC "/LTCG")
+--- qpid-proton-0.39.0/CMakeLists.txt.orig	2024-10-27 19:41:00.565878024 +0100
++++ qpid-proton-0.39.0/CMakeLists.txt	2024-10-27 20:25:16.041492078 +0100
+@@ -154,11 +154,6 @@ option(ENABLE_BENCHMARKS "Enable buildin
+ option(BUILD_EXAMPLES "Enable building example programs" ON)
+ option(BUILD_TLS "Enable building separate TLS library for Proton raw connections" OFF)
  
+-# Set any additional compiler specific flags
 -set (WERROR_GNU "-Werror")
 -set (WERROR_Clang "-Werror")
 -set (WERROR_MSVC "")

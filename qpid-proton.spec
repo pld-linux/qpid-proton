@@ -9,15 +9,15 @@
 Summary:	Qpid Proton - AMQP messaging toolkit
 Summary(pl.UTF-8):	Qpid Proton - narzędzia do komunikacji AMQP
 Name:		qpid-proton
-Version:	0.35.0
-Release:	4
+Version:	0.39.0
+Release:	1
 License:	Apache v2.0
 Group:		Libraries
 Source0:	https://downloads.apache.org/qpid/proton/%{version}/%{name}-%{version}.tar.gz
-# Source0-md5:	568c956964bbdb9dd92af7be2ab6ca8f
+# Source0-md5:	d910a2ec7ea874dc9f571b38285b7f82
 Patch0:		no-Werror.patch
-URL:		http://qpid.apache.org/proton/
-BuildRequires:	cmake >= 2.8.12
+URL:		https://qpid.apache.org/proton/
+BuildRequires:	cmake >= 3.16
 BuildRequires:	cyrus-sasl-devel
 BuildRequires:	doxygen
 %{?with_golang:BuildRequires:	golang >= 1.11}
@@ -25,8 +25,9 @@ BuildRequires:	libstdc++-devel
 BuildRequires:	libuuid-devel
 BuildRequires:	openssl-devel
 BuildRequires:	pkgconfig
-BuildRequires:	python >= 2
-%{?with_python:BuildRequires:	python-devel}
+BuildRequires:	python3 >= 1:3.8
+%{?with_python:BuildRequires:	python3-devel >= 1:3.8}
+BuildRequires:	rpm-build >= 4.6
 %{?with_ruby:BuildRequires:	ruby-devel}
 %{?with_python:BuildRequires:	swig-python}
 %{?with_ruby:BuildRequires:	swig-ruby}
@@ -121,33 +122,34 @@ BuildArch:	noarch
 %description cpp-apidocs
 Documentation for Qpid Proton C++ API.
 
-%description c-apidocs -l pl.UTF-8
+%description cpp-apidocs -l pl.UTF-8
 Dokumentacja API biblioteki C++ Qpid Proton.
 
-
-%package -n python-%{name}
+%package -n python3-%{name}
 Summary:	Python language bindings for the Qpid Proton messaging framework
 Summary(pl.UTF-8):	Wiązania Pythona do szkieletu komunikacji Qpid Proton
 Group:		Libraries/Python
 Requires:	%{name}-c = %{version}-%{release}
+Obsoletes:	python-qpid-proton < 0.39
 
-%description -n python-%{name}
+%description -n python3-%{name}
 Python language bindings for the Qpid Proton messaging framework.
 
-%description -n python-%{name} -l pl.UTF-8
+%description -n python3-%{name} -l pl.UTF-8
 Wiązania Pythona do szkieletu komunikacji Qpid Proton.
 
-%package -n python-%{name}-apidocs
+%package -n python3-%{name}-apidocs
 Summary:	Documentation for the Python language bindings for Qpid Proton
 Summary(pl.UTF-8):	Dokumentacja wiązań Pythona do biblioteki Qpid Proton
 Group:		Documentation
+Obsoletes:	python-qpid-proton-apidocs < 0.39
 Obsoletes:	python-qpid-proton-doc < 0.31.0
 BuildArch:	noarch
 
-%description -n python-%{name}-apidocs
+%description -n python3-%{name}-apidocs
 Documentation for the Python language bindings for Qpid Proton.
 
-%description -n python-%{name}-apidocs -l pl.UTF-8
+%description -n python3-%{name}-apidocs -l pl.UTF-8
 Dokumentacja wiązań Pythona do biblioteki Qpid Proton.
 
 %package -n ruby-%{name}
@@ -167,24 +169,22 @@ Wiązania języka Ruby do szkieletu komunikacji Qpid Proton.
 %setup -q
 %patch0 -p1
 
-%{__sed} -i -e '1s,/usr/bin/python$,%{__python},' \
+%{__sed} -i -e '1s,/usr/bin/python$,%{__python3},' \
 	c/examples/testme \
 	cpp/examples/testme
 
-%{__sed} -i -e '1s,/usr/bin/env python$,%{__python},' \
+%{__sed} -i -e '1s,/usr/bin/env python3$,%{__python3},' \
 	python/examples/*.py
 
 %build
-install -d build
-cd build
-%cmake .. \
+%cmake -B build \
 	-DBUILD_BINDINGS="cpp;go%{?with_python:;python}%{?with_ruby:;ruby}" \
 	%{?with_golang:-DBUILD_GO=ON} \
 	%{?with_static_libs:-DBUILD_STATIC_LIBS=ON} \
-	-DPYTHON_SITEARCH_PACKAGES=%{py_sitedir} \
 	-DSYSINSTALL_PYTHON=ON
+#	-DPYTHON_SITEARCH_PACKAGES=%{py_sitedir} \
 
-%{__make} all docs
+%{__make} -C build all docs
 
 %install
 rm -rf $RPM_BUILD_ROOT
@@ -201,13 +201,20 @@ install -d $RPM_BUILD_ROOT{%{_examplesdir},%{_docdir}/%{name}}
 %{__mv} $RPM_BUILD_ROOT%{_datadir}/proton/docs/api-cpp $RPM_BUILD_ROOT%{_docdir}/%{name}
 
 %if %{with python}
-%{__mv} $RPM_BUILD_ROOT%{_datadir}/proton/docs/api-py $RPM_BUILD_ROOT%{_docdir}/%{name}
-%{__mv} $RPM_BUILD_ROOT%{_datadir}/proton/examples/python $RPM_BUILD_ROOT%{_examplesdir}/python-%{name}-%{version}
+cd build/python
+%py3_install
+cd ../..
 
-%py_postclean
+%{__mv} $RPM_BUILD_ROOT%{_datadir}/proton/docs/api-py $RPM_BUILD_ROOT%{_docdir}/%{name}
+%{__rm} -r $RPM_BUILD_ROOT%{_docdir}/%{name}/api-py/{.doctrees,_sources,.buildinfo,conf.py,*.inv,*.rst}
+%{__mv} $RPM_BUILD_ROOT%{_datadir}/proton/examples/python $RPM_BUILD_ROOT%{_examplesdir}/python-%{name}-%{version}
 %endif
 
 %if %{with ruby}
+
+install -d $RPM_BUILD_ROOT%{_libdir}/proton/bindings/ruby
+install build/ruby/cproton.so $RPM_BUILD_ROOT%{_libdir}/proton/bindings/ruby
+cp -pr build/ruby/gem/lib/* $RPM_BUILD_ROOT%{_libdir}/proton/bindings/ruby
 %{__mv} $RPM_BUILD_ROOT%{_datadir}/proton/examples/ruby $RPM_BUILD_ROOT%{_examplesdir}/ruby-%{name}-%{version}
 %endif
 
@@ -271,13 +278,15 @@ rm -rf $RPM_BUILD_ROOT
 %{_examplesdir}/%{name}-cpp-%{version}
 
 %if %{with python}
-%files -n python-%{name}
+%files -n python3-%{name}
 %defattr(644,root,root,755)
-%attr(755,root,root) %{py_sitedir}/_cproton.so
-%{py_sitedir}/cproton.py[co]
-%{py_sitedir}/proton
+%attr(755,root,root) %{py3_sitedir}/cproton_ffi.abi3.so
+%{py3_sitedir}/cproton.py
+%{py3_sitedir}/__pycache__/cproton.cpython-*.py[co]
+%{py3_sitedir}/proton
+%{py3_sitedir}/python_qpid_proton-%{version}-py*.egg-info
 
-%files -n python-%{name}-apidocs
+%files -n python3-%{name}-apidocs
 %defattr(644,root,root,755)
 %dir %{_docdir}/%{name}
 %{_docdir}/%{name}/api-py

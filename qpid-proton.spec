@@ -10,7 +10,7 @@ Summary:	Qpid Proton - AMQP messaging toolkit
 Summary(pl.UTF-8):	Qpid Proton - narzędzia do komunikacji AMQP
 Name:		qpid-proton
 Version:	0.39.0
-Release:	
+Release:	2
 License:	Apache v2.0
 Group:		Libraries
 Source0:	https://downloads.apache.org/qpid/proton/%{version}/%{name}-%{version}.tar.gz
@@ -167,7 +167,7 @@ Wiązania języka Ruby do szkieletu komunikacji Qpid Proton.
 
 %prep
 %setup -q
-%patch0 -p1
+%patch -P 0 -p1
 
 %{__sed} -i -e '1s,/usr/bin/python$,%{__python3},' \
 	c/examples/testme \

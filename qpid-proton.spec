@@ -10,7 +10,7 @@ Summary:	Qpid Proton - AMQP messaging toolkit
 Summary(pl.UTF-8):	Qpid Proton - narzędzia do komunikacji AMQP
 Name:		qpid-proton
 Version:	0.39.0
-Release:	3
+Release:	4
 License:	Apache v2.0
 Group:		Libraries
 Source0:	https://downloads.apache.org/qpid/proton/%{version}/%{name}-%{version}.tar.gz
@@ -26,10 +26,13 @@ BuildRequires:	libuuid-devel
 BuildRequires:	openssl-devel
 BuildRequires:	pkgconfig
 BuildRequires:	python3 >= 1:3.8
-%{?with_python:BuildRequires:	python3-devel >= 1:3.8}
+%if %{with python}
+BuildRequires:	python3-cffi >= 1.0.0
+BuildRequires:	python3-devel >= 1:3.8
+BuildRequires:	swig-python
+%endif
 BuildRequires:	rpm-build >= 4.6
 %{?with_ruby:BuildRequires:	ruby-devel}
-%{?with_python:BuildRequires:	swig-python}
 %{?with_ruby:BuildRequires:	swig-ruby}
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
@@ -177,11 +180,13 @@ Wiązania języka Ruby do szkieletu komunikacji Qpid Proton.
 	python/examples/*.py
 
 %build
+# testing needs network
 %cmake -B build \
-	-DBUILD_BINDINGS="cpp;go%{?with_python:;python}%{?with_ruby:;ruby}" \
+	-DBUILD_BINDINGS="cpp%{?with_golang:;go}%{?with_python:;python}%{?with_ruby:;ruby}" \
 	%{?with_golang:-DBUILD_GO=ON} \
 	%{?with_static_libs:-DBUILD_STATIC_LIBS=ON} \
-	-DSYSINSTALL_PYTHON=ON
+	-DSYSINSTALL_PYTHON=ON \
+	-DBUILD_TESTING=OFF
 #	-DPYTHON_SITEARCH_PACKAGES=%{py_sitedir} \
 
 %{__make} -C build all docs

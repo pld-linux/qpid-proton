@@ -9,26 +9,26 @@
 Summary:	Qpid Proton - AMQP messaging toolkit
 Summary(pl.UTF-8):	Qpid Proton - narzędzia do komunikacji AMQP
 Name:		qpid-proton
-Version:	0.39.0
-Release:	4
+Version:	0.40.0
+Release:	1
 License:	Apache v2.0
 Group:		Libraries
 Source0:	https://downloads.apache.org/qpid/proton/%{version}/%{name}-%{version}.tar.gz
-# Source0-md5:	d910a2ec7ea874dc9f571b38285b7f82
+# Source0-md5:	b95610e09cfdbbe4a7b9e6e8c675e96a
 Patch0:		no-Werror.patch
 URL:		https://qpid.apache.org/proton/
 BuildRequires:	cmake >= 3.16
 BuildRequires:	cyrus-sasl-devel
 BuildRequires:	doxygen
 %{?with_golang:BuildRequires:	golang >= 1.11}
-BuildRequires:	libstdc++-devel
+BuildRequires:	libstdc++-devel >= 6:7
 BuildRequires:	libuuid-devel
 BuildRequires:	openssl-devel
 BuildRequires:	pkgconfig
-BuildRequires:	python3 >= 1:3.8
+BuildRequires:	python3 >= 1:3.9
 %if %{with python}
 BuildRequires:	python3-cffi >= 1.0.0
-BuildRequires:	python3-devel >= 1:3.8
+BuildRequires:	python3-devel >= 1:3.9
 BuildRequires:	swig-python
 %endif
 BuildRequires:	rpm-build >= 4.6
@@ -93,7 +93,7 @@ Summary:	C++ libraries for Qpid Proton
 Summary(pl.UTF-8):	Biblioteki C++ Qpid Proton
 Group:		Libraries
 Requires:	%{name}-c = %{version}-%{release}
-Requires:	libstdc++-devel
+Requires:	libstdc++-devel >= 6:7
 
 %description cpp
 C++ libraries for Qpid Proton.
@@ -184,10 +184,11 @@ Wiązania języka Ruby do szkieletu komunikacji Qpid Proton.
 %cmake -B build \
 	-DBUILD_BINDINGS="cpp%{?with_golang:;go}%{?with_python:;python}%{?with_ruby:;ruby}" \
 	%{?with_golang:-DBUILD_GO=ON} \
+	-DBUILD_PYTHON_UNBUNDLED_PKG=ON \
 	%{?with_static_libs:-DBUILD_STATIC_LIBS=ON} \
+	-DENABLE_PYTHON_ISOLATED=OFF \
 	-DSYSINSTALL_PYTHON=ON \
 	-DBUILD_TESTING=OFF
-#	-DPYTHON_SITEARCH_PACKAGES=%{py_sitedir} \
 
 %{__make} -C build all docs
 
@@ -216,7 +217,6 @@ cd ../..
 %endif
 
 %if %{with ruby}
-
 install -d $RPM_BUILD_ROOT%{_libdir}/proton/bindings/ruby
 install build/ruby/cproton.so $RPM_BUILD_ROOT%{_libdir}/proton/bindings/ruby
 cp -pr build/ruby/gem/lib/* $RPM_BUILD_ROOT%{_libdir}/proton/bindings/ruby

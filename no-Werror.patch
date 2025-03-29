@@ -1,14 +1,14 @@
---- qpid-proton-0.39.0/CMakeLists.txt.orig	2024-10-27 19:41:00.565878024 +0100
-+++ qpid-proton-0.39.0/CMakeLists.txt	2024-10-27 20:25:16.041492078 +0100
-@@ -154,11 +154,6 @@ option(ENABLE_BENCHMARKS "Enable buildin
+--- qpid-proton-0.40.0/CMakeLists.txt.orig	2025-03-29 07:44:39.005276646 +0100
++++ qpid-proton-0.40.0/CMakeLists.txt	2025-03-29 07:45:04.345139368 +0100
+@@ -164,11 +164,6 @@ option(BUILD_TOOLS "Enable building comm
  option(BUILD_EXAMPLES "Enable building example programs" ON)
  option(BUILD_TLS "Enable building separate TLS library for Proton raw connections" OFF)
  
 -# Set any additional compiler specific flags
 -set (WERROR_GNU "-Werror")
 -set (WERROR_Clang "-Werror")
--set (WERROR_MSVC "")
+-set (WERROR_MSVC "/WX")
 -
  set (COMMON_WARNING_GNU "-Wall -pedantic-errors")
  set (COMMON_WARNING_Clang "-Wall -pedantic")
- set (COMMON_WARNING_MSVC "")
+ string (JOIN " " COMMON_WARNING_MSVC "/W4" "/analyze"
